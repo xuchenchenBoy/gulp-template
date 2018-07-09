@@ -8,6 +8,8 @@ var eslint = require('gulp-eslint')
 var watch = require('gulp-watch');
 var livereload = require('gulp-livereload');
 var connect = require('gulp-connect');
+var postcss = require('gulp-postcss');
+var adaptive = require('postcss-adaptive');
 
 // 检查js规则
 gulp.task('lint', function(){
@@ -19,7 +21,7 @@ gulp.task('lint', function(){
 
 // js的合并压缩
 gulp.task('script', function() {
-  gulp.src(['src/js/index.js'])
+  gulp.src(['src/js/amfe-flexible.js', 'src/js/index.js'])
     .pipe(concat('min.js')) // 合并
     .pipe(uglify()) // 压缩
     .pipe(gulp.dest('dist'))
@@ -28,9 +30,12 @@ gulp.task('script', function() {
 
 // css的合并压缩
 gulp.task('style', function() {
+  var processors = [adaptive({ remUnit: 75 })];
+
   gulp.src(['src/css/reset.less', 'src/css/style.less'])
   .pipe(less())
   .pipe(concat('min.css'))
+  .pipe(postcss(processors))
   .pipe(minifyCss())
   .pipe(autoprefixer({  //自动给CSS 加前缀，用于兼容不同浏览器，不同版本
     browsers: ['last 4 versions'], // 主流浏览器的最新的四个版本
